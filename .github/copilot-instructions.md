@@ -81,6 +81,8 @@ We use tabs, not spaces.
 
 ### Style
 
+#### TypeScript/JavaScript Style
+
 - Use arrow functions `=>` over anonymous function expressions
 - Only surround arrow function parameters when necessary. For example, `(x) => x + x` is wrong but the following are correct:
 
@@ -104,6 +106,82 @@ function f(x: number, y: string): void { }
 ```
 
 - Whenever possible, use in top-level scopes `export function x(…) {…}` instead of `export const x = (…) => {…}`. One advantage of using the `function` keyword is that the stack-trace shows a good name when debugging.
+
+#### CSS Style Guidelines
+
+- Use tabs for indentation in CSS files (consistent with TypeScript)
+- Follow kebab-case for CSS class names (e.g., `.monaco-text-button`, `.getting-started-container`)
+- Use CSS custom properties (variables) for theme-aware styling: `var(--vscode-button-background)`
+- Include Microsoft copyright header in all CSS files
+- Group related CSS properties together and separate groups with blank lines
+- Use meaningful class name prefixes:
+  - `.monaco-` prefix for core Monaco editor components
+  - `.vscode-` prefix for VS Code specific UI elements
+  - Component-specific prefixes (e.g., `.getting-started-`, `.debug-`)
+
+```css
+/* Good example following VS Code patterns */
+.monaco-text-button {
+	box-sizing: border-box;
+	display: flex;
+	width: 100%;
+	padding: 4px;
+	border-radius: 2px;
+	
+	text-align: center;
+	cursor: pointer;
+	
+	justify-content: center;
+	align-items: center;
+	
+	border: 1px solid var(--vscode-button-border, transparent);
+	color: var(--vscode-button-foreground);
+	background-color: var(--vscode-button-background);
+}
+
+.monaco-text-button:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+```
+
+- Use logical CSS properties for better internationalization support
+- Always provide fallback values for CSS custom properties: `var(--vscode-foreground, #cccccc)`
+- Use `!important` sparingly and only when overriding external libraries or addressing specificity conflicts
+- Prefer flexbox and CSS Grid for layout over absolute positioning
+- Include focus styles for accessibility: `outline-offset: 2px !important;`
+
+#### HTML Structure Guidelines
+
+- Use semantic HTML5 elements where appropriate (`<main>`, `<section>`, `<article>`, `<nav>`)
+- Follow accessibility best practices:
+  - Include appropriate ARIA attributes
+  - Ensure proper heading hierarchy
+  - Use meaningful alt text for images
+- Use CSS classes instead of inline styles
+- Keep HTML structure clean and avoid deep nesting when possible
+
+#### File Naming Conventions
+
+- Use kebab-case for CSS file names: `getting-started.css`, `quick-input.css`
+- Place CSS files in a `media/` subdirectory within the component folder
+- CSS files should be co-located with their TypeScript components
+- Use descriptive names that match the component they're styling
+
+#### Responsive Design Guidelines
+
+- Use relative units (`em`, `rem`, `%`) for scalable layouts
+- Design for various screen sizes and zoom levels (VS Code supports up to 500% zoom)
+- Test layouts at different font sizes and screen resolutions
+- Use CSS Grid and Flexbox for responsive layouts
+- Consider high contrast mode compatibility
+
+#### Theme Integration
+
+- Always use CSS custom properties for colors: `var(--vscode-editor-background)`
+- Support both light and dark themes through CSS variables
+- Test styling in high contrast mode
+- Avoid hardcoded color values - use theme variables instead
+- Reference VS Code's color token system for consistent theming
 
 ### Code Quality
 
