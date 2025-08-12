@@ -175,3 +175,6 @@ registerEditorAction(ToggleCommentLineAction);
 registerEditorAction(AddLineCommentAction);
 registerEditorAction(RemoveLineCommentAction);
 registerEditorAction(BlockCommentAction);
+
+// Import the auto comment action
+import './autoCommentAction.js';
