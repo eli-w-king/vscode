@@ -54,8 +54,21 @@ class AutoCommentAction extends EditorAction {
 
 		let comment = '';
 
+		// Detect import/export statements first (before function checks)
+		if (this.isImportExport(trimmedLine)) {
+			comment = '// Module import/export';
+		}
+		// Detect control flow statements before function checks
+		else if (this.isControlFlow(trimmedLine)) {
+			comment = `// ${this.getControlFlowType(trimmedLine)} statement`;
+		}
+		// Detect class declarations
+		else if (this.isClassDeclaration(trimmedLine)) {
+			const className = this.extractClassName(trimmedLine);
+			comment = `// ${className ? `Class: ${className}` : 'Class definition'}`;
+		}
 		// Detect function declarations
-		if (this.isFunctionDeclaration(trimmedLine)) {
+		else if (this.isFunctionDeclaration(trimmedLine)) {
 			const functionName = this.extractFunctionName(trimmedLine);
 			comment = `// ${functionName ? `Function: ${functionName}` : 'Function definition'}`;
 		}
@@ -63,19 +76,6 @@ class AutoCommentAction extends EditorAction {
 		else if (this.isVariableDeclaration(trimmedLine)) {
 			const variableName = this.extractVariableName(trimmedLine);
 			comment = `// ${variableName ? `Variable: ${variableName}` : 'Variable declaration'}`;
-		}
-		// Detect class declarations
-		else if (this.isClassDeclaration(trimmedLine)) {
-			const className = this.extractClassName(trimmedLine);
-			comment = `// ${className ? `Class: ${className}` : 'Class definition'}`;
-		}
-		// Detect import/export statements
-		else if (this.isImportExport(trimmedLine)) {
-			comment = '// Module import/export';
-		}
-		// Detect if/else/for/while statements
-		else if (this.isControlFlow(trimmedLine)) {
-			comment = `// ${this.getControlFlowType(trimmedLine)} statement`;
 		}
 		// Default comment for other lines
 		else {
@@ -136,7 +136,8 @@ class AutoCommentAction extends EditorAction {
 
 	// Helper methods for code analysis
 	private isFunctionDeclaration(line: string): boolean {
-		return /^(function\s+\w+|const\s+\w+\s*=\s*\(|\w+\s*\(|async\s+function|\w+\s*:\s*function|export\s+function|function\s*\*)/i.test(line) ||
+		return /^(function\s+\w+|const\s+\w+\s*=\s*\(|async\s+function|export\s+function|function\s*\*)/i.test(line) ||
+			   /^\s*\w+\s*\([^)]*\)\s*\{/i.test(line) ||  // Method call or arrow function
 			   /^(public|private|protected)?\s*(static\s+)?[\w<>]+\s+\w+\s*\(/i.test(line) ||  // Java/C# method
 			   /^def\s+\w+\s*\(/i.test(line);  // Python function
 	}
@@ -149,7 +150,8 @@ class AutoCommentAction extends EditorAction {
 		match = line.match(/const\s+(\w+)\s*=/i);
 		if (match) return match[1];
 		
-		match = line.match(/(\w+)\s*\(/);
+		// Method declaration pattern (more specific)
+		match = line.match(/^\s*(\w+)\s*\([^)]*\)\s*\{/);
 		if (match) return match[1];
 
 		// Java/C# method patterns
